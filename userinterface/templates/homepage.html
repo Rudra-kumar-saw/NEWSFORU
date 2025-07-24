@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    <style>
+    :root {
+        --bg-light: #f9f9f9;
+        --bg-dark: #111;
+        --card-light: #fff;
+        --card-dark: #1e1e1e;
+        --text-light: #000;
+        --text-dark: #fff;
+    }
+
+    html[data-theme="light"] {
+        --bg-color: var(--bg-light);
+        --card-color: var(--card-light);
+        --text-color: var(--text-light);
+    }
+
+    html[data-theme="dark"] {
+        --bg-color: var(--bg-dark);
+        --card-color: var(--card-dark);
+        --text-color: var(--text-dark);
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg-color);
+        color: var(--text-color);
+        font-family: 'Segoe UI', sans-serif;
+        overflow: hidden;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    .reel-wrapper {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .reel-card {
+        width: 400px;
+        max-width: 95vw;
+        background: var(--card-color);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        display: none;
+        flex-direction: column;
+        height: 85vh;
+         margin-top: -30px;
+        justify-content: space-between;
+        transition: opacity 0.3s ease, background 0.3s, color 0.3s;
+    }
+
+    .reel-card.active {
+        display: flex;
+    }
+
+    .reel-card img {
+        width: 100%;
+        height: 45vh;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .reel-card h3 {
+        margin: 10px 0;
+    }
+
+    .reel-card p {
+        font-size: 15px;
+        text-align: justify;
+    }
+
+    .buttons {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    {% comment %} .btn {
+        padding: 10px 16px;
+        background-color: #ff4081;
+        border: none;
+        border-radius: 25px;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn:hover {
+        background: #e73370;
+    } {% endcomment %}
+
+    @media (max-width: 600px) {
+    .reel-card {
+        margin-top: -10px;
+
+    }
+    }
+    @media (min-width: 1024px) {
+    .reel-card {
+        margin-top: -50px;
+    }
+    }
+
+
+
+
+</style>
+
+</style>
+
+<div class="reel-wrapper">
+    {% for news in news_list %}
+        <div class="reel-card" id="reel-{{ forloop.counter0 }}">
+            {% if news.photo %}
+                <img src="{{ news.photo.url }}" alt="News Image">
+            {% endif %}
+            <h3>{{ news.title }}</h3>
+            <p>{{ news.content|truncatewords:40 }}</p>
+            <!-- Removed category line -->
+            {% comment %} <div class="buttons">
+                <button class="btn">❤️ Like</button>
+                <button class="btn" onclick="navigator.share ? navigator.share({title: '{{ news.title }}'}) : alert('Sharing not supported')">🔗 Share</button>
+            </div> {% endcomment %}
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    const reels = document.querySelectorAll('.reel-card');
+    let current = 0;
+
+    function showReel(index) {
+        reels.forEach((reel, i) => {
+            reel.classList.toggle('active', i === index);
+        });
+    }
+
+    function nextReel() {
+        if (current < reels.length - 1) {
+            current++;
+            showReel(current);
+        }
+    }
+
+    function prevReel() {
+        if (current > 0) {
+            current--;
+            showReel(current);
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "ArrowDown") {
+            nextReel();
+        } else if (e.key === "ArrowUp") {
+            prevReel();
+        }
+    });
+
+    // Show first reel
+    showReel(current);
+</script>
+{% endblock %}
